@@ -5,25 +5,25 @@ import math
 def detect_eyes(img, classifier):
     global bounding_lefteye, bounding_righteye
     gray_frame = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    eyes = classifier.detectMultiScale(gray_frame, 1.3, 5) # detect eyes
-    width = np.size(img, 1) # get face frame width
-    height = np.size(img, 0) # get face frame height
+    eyes = classifier.detectMultiScale(gray_frame, 1.3, 5) # detectar ojos
+    width = np.size(img, 1) # obtener el ancho del marco de la cara
+    height = np.size(img, 0) # obtener la altura del marco de la cara
     left_eye = None
     right_eye = None
     for (x, y, w, h) in eyes:
         if y < height / 2:
-            eyecenter = x + w / 2  # get the eye center
+            eyecenter = x + w / 2  # obtener el centro del ojo
             if eyecenter < width * 0.5:
-                print('left_eye',x, y, w, h)
+                print('left_eye',x, y, w, h) # se imprime la posición en x,y del ojo izquierdo 
                 left_eye = img[y:y + h, x:x + w]
-                cv2.rectangle(img, (x, y), (x + w, y + h), 255, 2)
+                cv2.rectangle(img, (x, y), (x + w, y + h), 255, 2) # se dibuja el marco del ojo izquierdo
             else:
-                print('right_eye',x, y, w, h)
+                print('right_eye',x, y, w, h) # se imprime la posición en x,y del ojo derecho
                 right_eye = img[y:y + h, x:x + w]
-                cv2.rectangle(img, (x, y), (x + w, y + h), 255, 2)
+                cv2.rectangle(img, (x, y), (x + w, y + h), 255, 2) # se dibuja el marco del ojo derecho
     return left_eye, right_eye
 
-def detect_faces(img, classifier):
+def detect_faces(img, classifier):      # función para detectar la cara
     global biggest
     gray_frame = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     coords = classifier.detectMultiScale(gray_frame, 1.3, 5)
@@ -61,15 +61,13 @@ def blob_process(img, threshold, detector):
 
 
 def main():
-    photo = cv2.imread('/Users/lauestupinan/Desktop/T/34/foto2.jpg')
+    photo = cv2.imread('/Users/lauestupinan/Desktop/T/34/foto2.jpg')    # se ingresa la ruta de la imagen que se quiere procesar
     face_frame = detect_faces(photo, face_cascade)
     if face_frame is not None:
         eyes = detect_eyes(face_frame, eye_cascade)
         j=0
         nombre = ['ojo1', 'ojo2', 'ojo3', 'ojo4']
         for eye in eyes:
-            #print('holi')
-            #print(eye.size)
             if eye is not None:
 
                 eye = cut_eyebrows(eye)
@@ -95,10 +93,10 @@ def main():
                         cv2.circle(eye, (cx, cy), 1, (0, 0, 255), 3)
                     i+=1
             j+=1
-    cv2.imshow('image', photo)
-    cv2.imshow('image1', face_frame)
-    cv2.imshow('image2', eyes[0])
-    cv2.imshow('image3', eyes[1])
+    cv2.imshow('image', photo)        # se muestra la imagen procesada
+    cv2.imshow('image1', face_frame)  # se muestra el marco de la cara con los ojos detectados
+    cv2.imshow('image2', eyes[0])     # se muestra el marco del ojo izquierdo
+    cv2.imshow('image3', eyes[1])     # se muestra el marco del ojo derecho
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
